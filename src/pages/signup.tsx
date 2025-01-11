@@ -1,61 +1,61 @@
-import { useRouter } from "next/router";
-import style from "@/styles/index.module.css";
-import { useState } from "react";
 import axios from "axios";
+import style from "@/styles/signup.module.css";
+import { useState } from "react";
 import { useAuthStore } from "./authStore";
+import { useRouter } from "next/router";
 
-export default function Login() {
+export default function SignUp() {
   const [formData, setFormData] = useState({
     nickname: "",
     password: "",
   });
+
   const [error, setError] = useState("");
-  const setUser = useAuthStore((state) => state.setUser); // Zustand의 setUser 함수
+
   const router = useRouter();
+
+  // Zustand 상태 업데이트 함수 가져오기
+  const setUser = useAuthStore((state) => state.setUser);
+
   const onHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    console.log(name, value);
     setFormData({ ...formData, [name]: value });
   };
-  const onHandleLogin = async () => {
+
+  const onHandleSignUp = async () => {
     if (!formData.nickname || !formData.password) {
       setError("닉네임과 비밀번호를 입력해주세요.");
       return;
     }
-
     try {
-      const response = await axios.post("/api/login", {
+      const response = await axios.post("/api/users", {
         nickname: formData.nickname,
         password: formData.password,
       });
 
-      // 로그인 성공 시 상태 저장 및 리다이렉트
-      localStorage.setItem("user", JSON.stringify(response.data));
+      // 회원가입 성공 시 Zustand에 사용자 정보 저장
       setUser({ nickname: formData.nickname });
-      alert("로그인 성공!");
-      router.push("/home"); // 홈페이지로 이동
+      alert("회원가입 성공!");
+      router.push("/home");
+      console.log(response.data);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message || "로그인에 실패했습니다.");
+        setError(error.response?.data?.message || "회원가입에 실패했습니다.");
       } else {
         setError("서버와 연결할 수 없습니다.");
       }
     }
   };
-  const onHandleRedirectToSignUp = () => {
-    router.push("/signup");
-  };
-
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      onHandleLogin();
+      onHandleSignUp();
     }
   };
 
   return (
     <div className={style.container}>
       <section>
-        <h1 className={style.login}>웹 서비스 이름</h1>
+        <h1 className={style.welcome}>Hey, Welcome Back!</h1>
       </section>
       <section>
         <div>
@@ -63,7 +63,7 @@ export default function Login() {
           <input
             type="text"
             name="nickname"
-            placeholder="닉네임을 입력해주세요..."
+            placeholder="사용하실 닉네임을 입력해주세요..."
             className={style.input_data}
             value={formData.nickname}
             onChange={onHandleChange}
@@ -72,25 +72,18 @@ export default function Login() {
         <div>
           <h3 className={style.input_text}>Password</h3>
           <input
+            onKeyDown={onKeyDown}
             type="password"
             name="password"
-            onKeyDown={onKeyDown}
-            placeholder="비밀번호를 입력해주세요..."
+            placeholder="비밀번호를 정해주세요..."
             className={style.input_data}
             value={formData.password}
             onChange={onHandleChange}
           />
-          <button onClick={onHandleLogin} className={style.login_button}>
-            로그인
+          <button className={style.signup_button} onClick={onHandleSignUp}>
+            Sign Up
           </button>
           {error && <p className={style.error}>{error}</p>}
-          <hr />
-          <button
-            onClick={onHandleRedirectToSignUp}
-            className={style.login_button}
-          >
-            계정이 없으신가요?
-          </button>
         </div>
       </section>
     </div>

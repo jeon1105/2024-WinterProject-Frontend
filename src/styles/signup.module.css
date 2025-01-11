@@ -1,0 +1,54 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 70vh; /* 화면 높이의 70% */
+  min-height: 400px; /* 최소 높이를 설정 */
+  padding: 2rem;
+  gap: 1.5rem;
+}
+
+.container > section {
+  width: 100%;
+  max-width: 400px;
+}
+
+.welcome {
+  font-size: 2rem;
+  text-align: center;
+}
+
+.input_text {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.input_data {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.signup_button {
+  width: 100%;
+  padding: 0.7rem;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.signup_button:hover {
+  background-color: #0056b3;
+}
+
+.error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
