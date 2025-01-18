@@ -1,0 +1,183 @@
+.container {
+  /* container */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px;
+  gap: 24px;
+
+  position: absolute;
+  width: 100%;
+  height: auto;
+  left: auto;
+  top: auto;
+}
+
+.titleContainer {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.subtitle {
+  color: #4b5563;
+  margin-top: 8px;
+  font-size: 16px;
+}
+
+.window {
+  /* window */
+
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 80px;
+
+  background: #fffdfd;
+}
+
+.list {
+  /* list */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 40px;
+
+  position: relative;
+  width: 100%;
+  height: auto;
+  left: auto;
+  top: 200px;
+}
+
+.list > .row {
+  /* row */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 40px;
+
+  width: auto;
+  height: 204px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.list > .row > .Item {
+  /* item */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0px;
+  gap: 20px;
+
+  width: auto;
+  height: 204px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 1;
+}
+
+.list > .row > .Item > .frame {
+  /* frame */
+
+  width: 100px;
+  height: 100px;
+
+  display: flex;
+
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 50px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.list > .row > .Item > .Box {
+  /* Box */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+
+  width: auto;
+  height: 60px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.list > .row > .Item > .Box > .title {
+  /* title */
+
+  width: 245px;
+  height: 28px;
+
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 28px;
+  /* identical to box height, or 140% */
+  text-align: center;
+
+  color: #000000;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.list > .row > .Item > .Box > .subtilte {
+  /* subtitle */
+
+  width: 245px;
+  height: 24px;
+
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  /* identical to box height, or 150% */
+  text-align: center;
+
+  color: rgba(0, 0, 0, 0.5);
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  align-self: stretch;
+  flex-grow: 0;
+}
