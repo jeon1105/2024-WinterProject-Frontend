@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 interface User {
-  id: string;
+  user_id: string;
   nickname: string;
   password: string;
 }
@@ -12,17 +12,17 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log("Request received:", req.method, req.url);
 
   if (req.method === "POST") {
-    const { nickname, id, password } = req.body;
+    const { nickname, user_id, password } = req.body;
 
     // 모든 필드 유효성 검사
-    if (!id || !nickname || !password) {
+    if (!user_id || !nickname || !password) {
       return res
         .status(400)
         .json({ message: "ID, 닉네임, 비밀번호를 모두 입력해주세요." });
     }
 
     // ID 중복 체크
-    const existingId = users.find((user) => user.id === id);
+    const existingId = users.find((user) => user.user_id === user_id);
     if (existingId) {
       return res.status(409).json({ message: "이미 사용 중인 ID입니다." });
     }
@@ -34,11 +34,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // 사용자 저장
-    users.push({ id, nickname, password });
+    users.push({ user_id, nickname, password });
 
     return res.status(201).json({
       message: "회원가입 성공!",
-      user: { id, nickname },
+      user: { user_id, nickname },
     });
   }
 

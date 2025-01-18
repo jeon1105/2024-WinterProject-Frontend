@@ -15,16 +15,23 @@ type Props = {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { id } = context.params!;
+  const { sheet_id } = context.params!;
 
   try {
-    const res = await fetch(`http://localhost:3000/api/musicsheet/${id}`);
+    // src/api/generatePdf 경로로 요청을 보냅니다.
+    const res = await fetch(`localhost:3000/allsheets/${sheet_id}`);
+
     if (!res.ok) {
       throw new Error("Failed to fetch music sheet");
     }
-    const { musicsheet } = await res.json();
+    const data = await res.json();
 
-    return { props: { musicsheet } };
+    // 데이터가 없거나 오류가 발생한 경우 처리
+    if (!data.sheet_id) {
+      return { notFound: true };
+    }
+
+    return { props: { musicsheet: data } }; // 반환된 데이터를 props로 전달
   } catch (error) {
     console.error(error);
     return { notFound: true };

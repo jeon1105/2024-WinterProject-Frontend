@@ -1,6 +1,6 @@
 import { musicSheetData } from "@/type";
 
-export default async function fecthSheets(
+export default async function fecthUpload(
   q?: string
 ): Promise<musicSheetData[]> {
   let url = `http://52.78.134.101:5000/musicsheets/convert`;

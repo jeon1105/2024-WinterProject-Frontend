@@ -3,10 +3,10 @@ import { users } from "./users"; // users 배열을 가져옵니다.
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    const { id, password } = req.body;
+    const { user_id, password } = req.body;
 
     // ID로 사용자 찾기
-    const user = users.find((user) => user.id === id);
+    const user = users.find((user) => user.user_id === user_id);
 
     if (!user) {
       return res
@@ -22,7 +22,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     // 로그인 성공
     return res.status(200).json({
       message: "로그인 성공!",
-      user: { id: user.id, nickname: user.nickname },
+      user: { user_id: user.user_id, nickname: user.nickname },
     });
   }
 

@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import NavigationBar from "@/widgets/header";
 import style from "@/styles/Home.module.css";
 import Image from "next/image";
-
 import { usePdfStore } from "./stores/pdfStore";
 
 export default function Home() {
@@ -15,47 +14,64 @@ export default function Home() {
   const [title, setTitle] = useState("");
   const [composer, setComposer] = useState("");
   const [instrument, setInstrument] = useState("");
-  const [level, setLevel] = useState("");
+  const [stage, setStage] = useState("");
+
+  const user_id = localStorage.getItem("user_id");
+  console.log(user_id);
 
   useEffect(() => {
-    // localStorage에서 로그인 정보를 가져옴
     const user = localStorage.getItem("user");
-
     if (!user) {
-      // 로그인하지 않은 경우, 로그인 페이지로 리디렉션
       router.push("/");
     }
   }, [router]);
 
   const addPdfUrl = usePdfStore((state) => state.addPdfUrl);
 
-  // Confirm 버튼 클릭 시 데이터 API로 보내고, pdf_url로 /allsheets로 이동
   const handleConfirm = async () => {
-    const data = new FormData();
-    data.append("title", title);
-    data.append("composer", composer);
-    data.append("instrument", instrument);
-    data.append("level", level);
-
-    // 파일 추가
-    if (file) {
-      data.append("file", file);
+    if (!user_id) {
+      console.error("userId is null or undefined");
+      return;
     }
 
+    const data = new FormData();
+    console.log(data);
+    data.append("user_id", user_id);
+    console.log("user_id:", data.get("user_id"));
+    data.append("title", title);
+    console.log("title:", data.get("title"));
+    data.append("composer", composer);
+    console.log("composer:", data.get("composer"));
+    data.append("instrument", instrument);
+    console.log("instrument:", data.get("instrument"));
+    data.append("stage", stage);
+    console.log("stage:", data.get("stage"));
+
+    if (file) {
+      data.append("file", file);
+      console.log("file:", data.get("file"));
+    }
+    const accessToken = localStorage.getItem("access_token");
+    console.log(accessToken);
+
     try {
-      const response = await fetch("/api/generatePdf", {
-        method: "POST",
-        body: data, // FormData를 body로 전송
-      });
+      const response = await fetch(
+        "http://52.78.134.101:5000/api/musicsheets/convert",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Authorization 헤더 추가
+          },
+          body: data,
+          credentials: "include", // 쿠키와 자격 증명을 함께 보내기
+        }
+      );
 
       if (response.ok) {
         const result = await response.json();
-        console.log(result);
-
         const pdfUrl = result.pdf_url;
-        console.log(pdfUrl);
+        console.log(result);
         if (pdfUrl) {
-          // PDF URL을 zustand에 저장
           addPdfUrl(pdfUrl);
         }
       } else {
@@ -84,8 +100,7 @@ export default function Home() {
       const file = files[0];
       setUploadedFileName(file.name);
       setFile(file);
-      console.log("Dropped file:", file);
-      // 여기에 파일 업로드 처리 로직 추가
+      console.log(file);
     }
   };
 
@@ -110,17 +125,16 @@ export default function Home() {
     });
   };
 
-  // section2에 반영할 값 상태 관리
   const [uploadedData, setUploadedData] = useState<{
     title: string;
     composer: string;
     instrument: string;
-    level: string;
+    stage: string;
   }>({
     title: "",
     composer: "",
     instrument: "",
-    level: "",
+    stage: "",
   });
 
   const handleInputChange = (
@@ -130,21 +144,12 @@ export default function Home() {
     setter(e.target.value);
   };
 
-  const handleSelectInstrument = (instrument: string) => {
-    setInstrument(instrument);
-  };
-
-  const handleSelectLevel = (level: string) => {
-    setLevel(level);
-  };
-
-  // Upload 버튼 클릭 시 입력값을 section2로 전달
   const handleUpload = () => {
     setUploadedData({
       title,
       composer,
       instrument,
-      level,
+      stage,
     });
   };
 
@@ -183,7 +188,7 @@ export default function Home() {
             <h1 className={style.title}>Composer Name</h1>
             <input
               className={style.input}
-              placeholder="Enter Conposer Name"
+              placeholder="Enter Composer Name"
               value={composer}
               onChange={(e) => handleInputChange(e, setComposer)}
             ></input>
@@ -200,7 +205,7 @@ export default function Home() {
                 }
                 onClick={() => {
                   toggleButton("row2", "Piano");
-                  handleSelectInstrument("Piano");
+                  setInstrument("Piano");
                 }}
               >
                 Piano
@@ -213,7 +218,7 @@ export default function Home() {
                 }
                 onClick={() => {
                   toggleButton("row2", "Guitar");
-                  handleSelectInstrument("Guitar");
+                  setInstrument("Guitar");
                 }}
               >
                 Guitar
@@ -226,7 +231,7 @@ export default function Home() {
                 }
                 onClick={() => {
                   toggleButton("row2", "Violin");
-                  handleSelectInstrument("Violin");
+                  setInstrument("Violin");
                 }}
               >
                 Violin
@@ -235,7 +240,7 @@ export default function Home() {
           </div>
 
           <div className={style.row4}>
-            <h1 className={style.title}>Difficulty Level</h1>
+            <h1 className={style.title}>Difficulty Stage</h1>
             <div className={style.button_group}>
               <button
                 className={
@@ -245,7 +250,7 @@ export default function Home() {
                 }
                 onClick={() => {
                   toggleButton("row4", "Beginner");
-                  handleSelectLevel("Beginner");
+                  setStage("Beginner");
                 }}
               >
                 Beginner
@@ -258,7 +263,7 @@ export default function Home() {
                 }
                 onClick={() => {
                   toggleButton("row4", "Intermediate");
-                  handleSelectLevel("Intermediate");
+                  setStage("Intermediate");
                 }}
               >
                 Intermediate
@@ -271,7 +276,7 @@ export default function Home() {
                 }
                 onClick={() => {
                   toggleButton("row4", "Advanced");
-                  handleSelectLevel("Advanced");
+                  setStage("Advanced");
                 }}
               >
                 Advanced
@@ -308,14 +313,14 @@ export default function Home() {
               <Image src="/frameIcon.svg" alt="Icon" width={60} height={60} />
             </div>
             <div className={style.component1}>
-              <h1 className={style.title}>Song Title : {uploadedData.title}</h1>
+              <h1 className={style.title}>Song Title: {uploadedData.title}</h1>
               <h1 className={style.subtitle}>
-                Composer : {uploadedData.composer}
+                Composer: {uploadedData.composer}
               </h1>
             </div>
             <div className={style.component2}>
               <h1>Instrument: {uploadedData.instrument}</h1>
-              <h1>Difficulty: {uploadedData.level}</h1>
+              <h1>Difficulty: {uploadedData.stage}</h1>
             </div>
           </div>
         </div>
