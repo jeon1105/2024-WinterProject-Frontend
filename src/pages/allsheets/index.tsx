@@ -3,11 +3,21 @@ import { useEffect, useState } from "react";
 import style from "./allsheets.module.css";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import fecthUpload from "@/lib/fetch-upload";
 
 type Score = {
   title: string;
   composer: string;
   sheet_id: string;
+};
+
+export const getStaticProps = async () => {
+  const allSheets = await fecthUpload();
+  return {
+    props: {
+      allSheets,
+    },
+  };
 };
 
 const ITEMS_PER_PAGE = 8; // 한 페이지에 보여줄 악보 개수

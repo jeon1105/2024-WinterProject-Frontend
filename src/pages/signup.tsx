@@ -8,7 +8,7 @@ import NavigationLoginBar from "@/widgets/header_login";
 export default function SignUp() {
   const [formData, setFormData] = useState({
     nickname: "",
-    id: "",
+    user_id: "",
     password: "",
   });
 
@@ -30,28 +30,42 @@ export default function SignUp() {
       return;
     }
     try {
-      const response = await axios.post("/api/users", {
+      console.log("Sending POST request with data:", formData);
+      const response = await axios.post(
+        "http://52.78.134.101:5000/signup",
+        {
+          nickname: formData.nickname,
+          user_id: formData.user_id,
+          password: formData.password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("Response received:", response);
+      setUser({
+        user_id: formData.user_id,
         nickname: formData.nickname,
-        id: formData.id,
-        password: formData.password,
       });
 
-      // 회원가입 성공 시 Zustand에 사용자 정보 저장
-      setUser({
-        id: formData.id, // 사용자 ID 추가
-        nickname: formData.nickname,
-      });
       alert("회원가입 성공!");
       router.push("/home");
-      console.log(response);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.response?.data);
         setError(error.response?.data?.message || "회원가입에 실패했습니다.");
       } else {
+        console.error("Unknown error:", error);
         setError("서버와 연결할 수 없습니다.");
       }
     }
   };
+
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // 버튼의 기본 동작(폼 제출)을 막음
+    onHandleSignUp();
+  };
+
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       onHandleSignUp();
@@ -83,10 +97,10 @@ export default function SignUp() {
             <h3 className={style.input_text}>ID</h3>
             <input
               type="text"
-              name="id"
+              name="user_id"
               placeholder="Enter your user ID"
               className={style.input_data}
-              value={formData.id}
+              value={formData.user_id}
               onChange={onHandleChange}
             />
           </div>
@@ -101,7 +115,11 @@ export default function SignUp() {
               value={formData.password}
               onChange={onHandleChange}
             />
-            <button className={style.signup_button} onClick={onHandleSignUp}>
+            <button
+              className={style.signup_button}
+              onClick={handleSubmit}
+              type="button"
+            >
               Sign Up
             </button>
             {error && <p className={style.error}>{error}</p>}

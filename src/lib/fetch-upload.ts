@@ -1,6 +1,6 @@
 import { musicSheetData } from "@/type";
 
-export default async function fecthSheets(
+export default async function fecthUpload(
   q?: string
 ): Promise<musicSheetData[]> {
   let url = `http://52.78.134.101:5000/musicsheets/convert`;
@@ -12,12 +12,12 @@ export default async function fecthSheets(
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error();
     }
 
     return await response.json();
   } catch (err) {
-    console.error("Error fetching the sheet:", err);
-    return null; // 에러 발생 시 null을 반환
+    console.error(err);
+    return [];
   }
 }
