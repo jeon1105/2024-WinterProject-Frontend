@@ -110,6 +110,11 @@ export default function Home() {
     });
   };
 
+  const [title, setTitle] = useState("");
+  const [composer, setComposer] = useState("");
+  const [instrument, setInstrument] = useState("");
+  const [level, setLevel] = useState("");
+
   // section2에 반영할 값 상태 관리
   const [uploadedData, setUploadedData] = useState<{
     title: string;
@@ -224,10 +229,7 @@ export default function Home() {
                     ? style.button_Action
                     : style.button
                 }
-                onClick={() => {
-                  toggleButton("row2", "Violin");
-                  handleSelectInstrument("Violin");
-                }}
+                onClick={() => toggleButton("row2", "Violin")}
               >
                 Violin
               </button>
@@ -243,10 +245,7 @@ export default function Home() {
                     ? style.button_Action
                     : style.button
                 }
-                onClick={() => {
-                  toggleButton("row4", "Beginner");
-                  handleSelectLevel("Beginner");
-                }}
+                onClick={() => toggleButton("row4", "Beginner")}
               >
                 Beginner
               </button>
@@ -256,10 +255,7 @@ export default function Home() {
                     ? style.button_Action
                     : style.button
                 }
-                onClick={() => {
-                  toggleButton("row4", "Intermediate");
-                  handleSelectLevel("Intermediate");
-                }}
+                onClick={() => toggleButton("row4", "Intermediate")}
               >
                 Intermediate
               </button>
@@ -269,10 +265,7 @@ export default function Home() {
                     ? style.button_Action
                     : style.button
                 }
-                onClick={() => {
-                  toggleButton("row4", "Advanced");
-                  handleSelectLevel("Advanced");
-                }}
+                onClick={() => toggleButton("row4", "Advanced")}
               >
                 Advanced
               </button>
@@ -296,9 +289,7 @@ export default function Home() {
           <h1 className={style.row2}>마지막으로 체크해보세요.</h1>
           <div className={style.row3}>
             <button className={style.Edit}>Edit</button>
-            <button className={style.Confirm} onClick={handleConfirm}>
-              Confirm
-            </button>
+            <button className={style.Confirm}>Confirm</button>
           </div>
         </div>
 
