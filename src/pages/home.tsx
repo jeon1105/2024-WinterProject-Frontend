@@ -302,7 +302,9 @@ export default function Home() {
           <h1 className={style.row2}>마지막으로 체크해보세요.</h1>
           <div className={style.row3}>
             <button className={style.Edit}>Edit</button>
-            <button className={style.Confirm}>Confirm</button>
+            <button className={style.Confirm} onClick={handleConfirm}>
+              Confirm
+            </button>
           </div>
         </div>
 
