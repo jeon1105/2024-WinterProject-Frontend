@@ -81,6 +81,40 @@ export default function AllSheet() {
     router.push(`/allsheets/${sheet_id}`); // 개별 악보 페이지로 이동
   };
 
+  const handleDeleteClick = async (sheet_id: string) => {
+    const user_id = localStorage.getItem("user_id");
+    const accessToken = localStorage.getItem("access_token");
+
+    if (!user_id || !accessToken) {
+      console.error("User ID or Access Token is missing");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://52.78.134.101:5000/musicsheets/${sheet_id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete score");
+      }
+
+      // 삭제 후, 로컬 상태에서 해당 악보를 제거
+      setScores((prevScores) =>
+        prevScores.filter((score) => score.sheet_id !== sheet_id)
+      );
+    } catch (error) {
+      console.error("Failed to delete score:", error);
+    }
+  };
+
   const handleNextPage = () => {
     if (currentPage < Math.ceil(scores.length / ITEMS_PER_PAGE)) {
       setCurrentPage((prev) => prev + 1);
@@ -109,6 +143,16 @@ export default function AllSheet() {
                 className={style.Item}
                 onClick={() => handleImageClick(score.sheet_id)}
               >
+                <Image
+                  src="/delete.svg"
+                  alt="Delete Icon"
+                  width={21}
+                  height={19}
+                  onClick={(e) => {
+                    e.stopPropagation(); // 클릭 이벤트 버블링 방지
+                    handleDeleteClick(score.sheet_id); // 삭제 요청
+                  }}
+                />
                 <div className={style.frame}>
                   <Image
                     src="/sheet.svg"

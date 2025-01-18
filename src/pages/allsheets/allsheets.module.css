@@ -36,13 +36,27 @@
 }
 
 .Item {
+  /* item */
+
+  /* Auto layout */
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  cursor: pointer;
+  padding: 12px 0px;
+  gap: 20px;
   background-color: #f3f3f3;
-  border-radius: 10px;
-  padding: 20px;
+
+  width: auto;
+  height: auto;
+
+  cursor: pointer;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 1;
+
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -51,9 +65,21 @@
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
+.delete {
+  /* window */
+
+  position: relative;
+  width: auto;
+  height: auto;
+  left: 0px;
+  top: 80px;
+
+  background: #fffdfd;
+}
+
 .frame {
-  width: 90px;
-  height: 90px;
+  width: auto;
+  height: auto;
   display: flex;
   justify-content: center;
   align-items: center;
