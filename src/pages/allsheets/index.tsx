@@ -7,7 +7,6 @@ import fecthUpload from "@/lib/fetch-upload";
 
 type Score = {
   title: string;
-  composer: string;
   sheet_id: string;
 };
 
@@ -28,18 +27,38 @@ export default function AllSheet() {
   const router = useRouter();
 
   useEffect(() => {
+    const user_id = localStorage.getItem("user_id"); // 클라이언트 사이드에서만 접근
     async function fetchScores(): Promise<void> {
+      if (!user_id) {
+        console.error("User ID is not available.");
+        return;
+      }
+
+      const accessToken = localStorage.getItem("access_token");
+      if (!accessToken) {
+        console.error("Access Token is not available.");
+        return;
+      }
+
       try {
-        const response = await fetch("/api/generatePdf");
+        const response = await fetch(
+          `http://52.78.134.101:5000/users/${user_id}/musicsheets`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`, // AccessToken 추가
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch scores");
         }
+
         const data = await response.json();
         console.log(data);
 
         // 데이터가 배열인지 확인하고, 그렇지 않으면 빈 배열로 설정
-        if (Array.isArray(data.musicsheet)) {
-          setScores(data.musicsheet);
+        if (Array.isArray(data)) {
+          setScores(data);
         } else {
           setScores([]);
         }
@@ -51,6 +70,7 @@ export default function AllSheet() {
 
     fetchScores();
   }, []);
+  console.log(scores);
 
   // 현재 페이지에 표시할 악보 계산
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -99,7 +119,6 @@ export default function AllSheet() {
                 </div>
                 <div className={style.Box}>
                   <div className={style.title}>{score.title}</div>
-                  <div className={style.subtitle}>{score.composer}</div>
                 </div>
               </div>
             ))}

@@ -56,14 +56,15 @@ export default function Home() {
 
     try {
       const response = await fetch(
-        "http://52.78.134.101:5000/api/musicsheets/convert",
+        "http://52.78.134.101:5000/musicsheets/convert",
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${accessToken}`, // Authorization 헤더 추가
           },
           body: data,
-          credentials: "include", // 쿠키와 자격 증명을 함께 보내기
+          credentials: "include", // 쿠키와 자격 증명을 함께 보내기 // 쿠키와 자격 증명을 함께 보내기
+          mode: "cors", // CORS 모드 설정
         }
       );
 
@@ -218,7 +219,7 @@ export default function Home() {
                 }
                 onClick={() => {
                   toggleButton("row2", "Guitar");
-                  setInstrument("Guitar");
+                  setInstrument("guitar");
                 }}
               >
                 Guitar
@@ -231,7 +232,7 @@ export default function Home() {
                 }
                 onClick={() => {
                   toggleButton("row2", "Violin");
-                  setInstrument("Violin");
+                  setInstrument("violin");
                 }}
               >
                 Violin
@@ -270,7 +271,7 @@ export default function Home() {
               </button>
               <button
                 className={
-                  activeButtons.row4 === "Advanced"
+                  activeButtons.row4 === "Hard"
                     ? style.button_Action
                     : style.button
                 }
