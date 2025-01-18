@@ -205,7 +205,7 @@ export default function Home() {
                 }
                 onClick={() => {
                   toggleButton("row2", "Piano");
-                  setInstrument("Piano");
+                  setInstrument("piano");
                 }}
               >
                 Piano
@@ -244,16 +244,16 @@ export default function Home() {
             <div className={style.button_group}>
               <button
                 className={
-                  activeButtons.row4 === "Beginner"
+                  activeButtons.row4 === "Easy"
                     ? style.button_Action
                     : style.button
                 }
                 onClick={() => {
-                  toggleButton("row4", "Beginner");
-                  setStage("Beginner");
+                  toggleButton("row4", "Easy");
+                  setStage("easy");
                 }}
               >
-                Beginner
+                Easy
               </button>
               <button
                 className={
@@ -263,7 +263,7 @@ export default function Home() {
                 }
                 onClick={() => {
                   toggleButton("row4", "Intermediate");
-                  setStage("Intermediate");
+                  setStage("intermediate");
                 }}
               >
                 Intermediate
@@ -275,11 +275,11 @@ export default function Home() {
                     : style.button
                 }
                 onClick={() => {
-                  toggleButton("row4", "Advanced");
-                  setStage("Advanced");
+                  toggleButton("row4", "Hard");
+                  setStage("hard");
                 }}
               >
-                Advanced
+                Hard
               </button>
             </div>
           </div>

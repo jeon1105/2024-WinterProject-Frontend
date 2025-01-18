@@ -21,10 +21,10 @@ export default function NavigationBar() {
       <h1 className={style.title}>Music Score Converter</h1>
 
       <div className={style.navigation}>
-        <button className={style.Button} onClick={() => router.push("/home")}>
+        <button className={style.button} onClick={() => router.push("/home")}>
           Home
         </button>
-        <button className={style.Button} onClick={handleLogout}>
+        <button className={style.button} onClick={handleLogout}>
           Logout
         </button>
         <div
