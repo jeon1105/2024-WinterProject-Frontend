@@ -4,6 +4,7 @@ import style from "./allsheets.module.css";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import fecthUpload from "@/lib/fetch-upload";
+import Fuse from "fuse.js";
 
 type Score = {
   title: string;
@@ -132,6 +133,16 @@ export default function AllSheet() {
       <NavigationBar />
       <div className={style.window}>
         <div className={style.container}>
+          <div className={style.Searchbar}>
+            <div className={style.state}>
+              <div className={style.supportcontent}>
+                <h1 className={style.supportingtext}>Hinted search text</h1>
+              </div>
+              <div className={style.TrailingElements}>
+                <Image src="/search.svg" width={18} height={18} alt={""} />
+              </div>
+            </div>
+          </div>
           <h1 className={style.titleContainer}>Uploaded Scores</h1>
           <p className={style.subtitle}>
             View and manage your converted PDF scores.

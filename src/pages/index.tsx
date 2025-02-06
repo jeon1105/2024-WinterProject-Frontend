@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import style from "@/styles/index.module.css";
 import { useState } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { useAuthStore } from "./stores/authStore"; // Zustand 가져오기
 
 import NavigationLoginBar from "@/widgets/header_login";
@@ -22,7 +22,7 @@ export default function Login() {
   const router = useRouter();
 
   // Zustand의 setUser 함수
-  const setUser = useAuthStore((state) => state.setUser); // Zustand에서 setUser 가져오기
+  const setUser = useAuthStore((state) => state.setUser);
 
   const onHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -39,31 +39,32 @@ export default function Login() {
 
     try {
       // 로그인 요청
-      const response = await axios.post<LoginResponse>(
-        "http://52.78.134.101:5000/login",
-        {
-          user_id,
-          password,
-        },
-        {
-          withCredentials: true, // 쿠키와 자격 증명을 함께 보내기
-        }
-      );
+      const response: AxiosResponse<LoginResponse> =
+        await axios.post<LoginResponse>(
+          "http://52.78.134.101:5000/login",
+          {
+            user_id,
+            password,
+          },
+          {
+            withCredentials: true, // 쿠키와 자격 증명을 함께 보내기
+          }
+        );
       console.log(response);
-      // 서버에서 Access Token을 받음
-      const { access_token, user_id: LoginResponse, nickname } = response.data; // user 정보와 access_token을 받아옴
+      // 서버에서 Access Token과 user 정보를 받음
+      const { access_token, user_id: id, nickname } = response.data;
       console.log(access_token);
-      console.log(user_id);
-      localStorage.setItem("user", user_id);
-      localStorage.setItem("user_id", user_id);
+      console.log(id);
 
-      // Access Token을 localStorage에 저장
+      // localStorage에 저장
+      localStorage.setItem("user", id);
+      localStorage.setItem("user_id", id);
       localStorage.setItem("access_token", access_token);
 
-      // user 정보 저장 (Zustand 상태 업데이트)
+      // Zustand를 통해 user 정보 저장
       setUser({
-        user_id: user_id, // user_id 상태에 저장
-        nickname: nickname, // nickname 상태에 저장
+        user_id: id,
+        nickname: nickname,
       });
       console.log("Updated user:", useAuthStore.getState().user);
 

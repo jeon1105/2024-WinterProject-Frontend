@@ -14,10 +14,9 @@ export default async function fecthSheets(
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-
     return await response.json();
   } catch (err) {
     console.error("Error fetching the sheet:", err);
-    return null; // 에러 발생 시 null을 반환
+    return []; // 에러 발생 시 빈 배열을 반환
   }
 }

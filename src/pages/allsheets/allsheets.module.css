@@ -26,6 +26,121 @@
   margin-bottom: 30px;
 }
 
+.Searchbar {
+  /* Search bar
+
+Search allows users to enter a keyword or phrase and get relevant information. It’s an alternative to other forms of navigation.
+
+🔍 Open search bar with hint text
+*/
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 4px;
+
+  width: 360px;
+  min-width: 360px;
+  max-width: 720px;
+  height: 56px;
+
+  /* M3/sys/light/surface-container-high */
+  background: #ece6f0;
+  border-radius: 28px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.Searchbar .state {
+  /* state-layer */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 4px;
+  gap: 4px;
+
+  width: 360px;
+  height: 56px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 1;
+}
+
+.Searchbar .state .supportcontent {
+  /* Content */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+
+  width: 300px;
+  height: 48px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  align-self: stretch;
+  flex-grow: 1;
+}
+
+.Searchbar .state .supportcontent .supportingtext {
+  /* supporting-text */
+
+  width: 139px;
+  height: 24px;
+
+  /* M3/body/large */
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  /* identical to box height, or 150% */
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.5px;
+
+  /* M3/sys/light/on-surface-variant */
+  color: #49454f;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.Searchbar .state .TrailingElements {
+  /* Trailing-Elements */
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0px;
+
+  width: 48px;
+  height: 48px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 2;
+  flex-grow: 0;
+}
+
 .list {
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* 한 줄에 4개 */
