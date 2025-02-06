@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NavigationBar from "@/widgets/header";
 import Image from "next/image";
-import style from "./individualsheet.module.css";
-import { GetServerSidePropsContext } from "next";
+import style from "./[sheet_id].module.css";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 type MusicSheet = {
   instrument: string;
@@ -10,40 +11,110 @@ type MusicSheet = {
   pdf_url: string;
 };
 
-type Props = {
-  musicsheet: MusicSheet;
-};
+export default function MusicSheetPage() {
+  const [musicsheet, setMusicsheet] = useState<MusicSheet | null>(null);
+  const [uploadedVideos, setUploadedVideos] = useState<string[]>([]); // 업로드된 영상 URL 배열
+  const [error, setError] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const router = useRouter();
+  const { sheet_id } = router.query; // sheet_id를 URL 파라미터에서 가져옵니다.
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { sheet_id } = context.params!;
+  useEffect(() => {
+    if (!sheet_id) return;
 
-  try {
-    // src/api/generatePdf 경로로 요청을 보냅니다.
-    const res = await fetch(`localhost:3000/allsheets/${sheet_id}`);
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch music sheet");
+    // 더미 데이터 처리
+    if (sheet_id === "dummy_id") {
+      setMusicsheet({
+        instrument: "Piano",
+        stage: "Beginner",
+        pdf_url: "/dummy.pdf",
+      });
+      return;
     }
-    const data = await res.json();
 
-    // 데이터가 없거나 오류가 발생한 경우 처리
-    if (!data.sheet_id) {
-      return { notFound: true };
-    }
+    const fetchMusicSheet = async () => {
+      const accessToken = localStorage.getItem("access_token");
 
-    return { props: { musicsheet: data } }; // 반환된 데이터를 props로 전달
-  } catch (error) {
-    console.error(error);
-    return { notFound: true };
-  }
-}
+      if (!accessToken) {
+        setError("No access token found.");
+        return;
+      }
 
-export default function MusicSheetPage({ musicsheet }: Props) {
-  const [showPreview, setShowPreview] = useState(false); // 미리보기 상태
+      try {
+        const response = await axios.get<MusicSheet>(
+          `https://smini.site/musicsheets/${sheet_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+
+        setMusicsheet(response.data);
+      } catch (error) {
+        console.error("Error fetching music sheet:", error);
+        setError("Failed to load music sheet");
+      }
+    };
+
+    fetchMusicSheet();
+  }, [sheet_id]);
 
   const handlePreview = () => {
-    setShowPreview(!showPreview); // 버튼을 누를 때마다 미리보기 토글
+    setShowPreview(!showPreview);
   };
+
+  const handleVideoUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setUploading(true);
+
+    try {
+      const response = await axios.post(
+        "https://smini.site/upload/video",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setUploadedVideos((prev) => [...prev, response.data.video_path]); // 서버에서 반환된 영상 URL 추가
+    } catch (error) {
+      console.error("Error uploading video:", error);
+      setError("Failed to upload video");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  if (error) {
+    return (
+      <div className={style.error}>
+        <h1>Error</h1>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  if (!musicsheet) {
+    return (
+      <div className={style.error}>
+        <h1>Music Sheet Not Found</h1>
+        <p>The requested music sheet could not be found.</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -70,7 +141,7 @@ export default function MusicSheetPage({ musicsheet }: Props) {
             <a
               href={musicsheet.pdf_url}
               target="_blank"
-              download={musicsheet.pdf_url}
+              rel="noopener noreferrer"
               className={style.button}
             >
               Download PDF
@@ -78,7 +149,6 @@ export default function MusicSheetPage({ musicsheet }: Props) {
           </div>
         </div>
 
-        {/* PDF 미리보기 영역 */}
         {showPreview && (
           <div className={style.preview}>
             <iframe
@@ -90,9 +160,31 @@ export default function MusicSheetPage({ musicsheet }: Props) {
           </div>
         )}
 
-        <div className={style.additionalInfo}>
-          <p className={style.text}>Instrument: {musicsheet.instrument}</p>
-          <p className={style.text}>Stage: {musicsheet.stage}</p>
+        <div className={style.uploadSection}>
+          <h3>Upload Your Performance</h3>
+          <input
+            type="file"
+            accept="video/*"
+            onChange={handleVideoUpload}
+            disabled={uploading}
+          />
+          {uploading && <p>Uploading...</p>}
+        </div>
+
+        <div className={style.videoList}>
+          <h3>Uploaded Videos</h3>
+          {uploadedVideos.length > 0 ? (
+            uploadedVideos.map((videoUrl, index) => (
+              <div key={index} className={style.videoItem}>
+                <video controls width="100%">
+                  <source src={videoUrl} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            ))
+          ) : (
+            <p>No videos uploaded yet.</p>
+          )}
         </div>
       </div>
     </>

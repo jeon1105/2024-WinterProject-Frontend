@@ -39,17 +39,16 @@ export default function Login() {
 
     try {
       // 로그인 요청
-      const response: AxiosResponse<LoginResponse> =
-        await axios.post<LoginResponse>(
-          "http://52.78.134.101:5000/login",
-          {
-            user_id,
-            password,
-          },
-          {
-            withCredentials: true, // 쿠키와 자격 증명을 함께 보내기
-          }
-        );
+      const response = await axios.post<LoginResponse>(
+        "https://smini.site/login",
+        {
+          user_id,
+          password,
+        },
+        {
+          withCredentials: true, // 쿠키와 자격 증명을 함께 보내기
+        }
+      );
       console.log(response);
       // 서버에서 Access Token과 user 정보를 받음
       const { access_token, user_id: id, nickname } = response.data;

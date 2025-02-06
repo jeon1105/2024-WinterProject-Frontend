@@ -28,49 +28,51 @@ export default function AllSheet() {
   const router = useRouter();
 
   useEffect(() => {
-    const user_id = localStorage.getItem("user_id"); // 클라이언트 사이드에서만 접근
-    async function fetchScores(): Promise<void> {
-      if (!user_id) {
-        console.error("User ID is not available.");
-        return;
-      }
+    const dummyData: Score = {
+      title: "Dummy Score",
+      sheet_id: "dummy_id",
+    };
 
+    setScores([dummyData]); // 기본적으로 더미 데이터로 초기화
+
+    const fetchScores = async () => {
+      const user_id = localStorage.getItem("user_id");
       const accessToken = localStorage.getItem("access_token");
-      if (!accessToken) {
-        console.error("Access Token is not available.");
+
+      if (!user_id || !accessToken) {
+        console.error("User ID or Access Token is missing");
         return;
       }
 
       try {
         const response = await fetch(
-          `http://52.78.134.101:5000/users/${user_id}/musicsheets`,
+          `https://smini.site/users/${user_id}/musicsheets`,
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`, // AccessToken 추가
+              Authorization: `Bearer ${accessToken}`,
             },
           }
         );
+
         if (!response.ok) {
           throw new Error("Failed to fetch scores");
         }
 
         const data = await response.json();
-        console.log(data);
+        console.log("Fetched data:", data);
 
-        // 데이터가 배열인지 확인하고, 그렇지 않으면 빈 배열로 설정
+        // 서버 데이터가 있다면 교체
         if (Array.isArray(data)) {
-          setScores(data);
-        } else {
-          setScores([]);
+          setScores([dummyData, ...data]);
         }
       } catch (error) {
-        console.error("Failed to load scores:", error);
-        setScores([]); // 오류 발생 시 빈 배열로 설정
+        console.error("Error fetching scores:", error);
       }
-    }
+    };
 
     fetchScores();
   }, []);
+
   console.log(scores);
 
   // 현재 페이지에 표시할 악보 계산
@@ -78,8 +80,36 @@ export default function AllSheet() {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentScores = scores.slice(startIndex, endIndex);
 
-  const handleImageClick = (sheet_id: string) => {
-    router.push(`/allsheets/${sheet_id}`); // 개별 악보 페이지로 이동
+  const handleImageClick = async (sheet_id: string) => {
+    const accessToken = localStorage.getItem("access_token");
+
+    if (!accessToken) {
+      console.error("Access Token is missing");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://smini.site/musicsheets/${sheet_id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to post to server");
+      }
+
+      // 요청이 성공하면 페이지 이동
+      router.push(`/allsheets/${sheet_id}`);
+      console.log(response);
+    } catch (error) {
+      console.error("Failed to post to server:", error);
+    }
   };
 
   const handleDeleteClick = async (sheet_id: string) => {
@@ -93,7 +123,7 @@ export default function AllSheet() {
 
     try {
       const response = await fetch(
-        `http://52.78.134.101:5000/musicsheets/${sheet_id}`,
+        `https://smini.site/musicsheets/${sheet_id}`,
         {
           method: "DELETE",
           headers: {
@@ -152,7 +182,7 @@ export default function AllSheet() {
               <div
                 key={score.sheet_id}
                 className={style.Item}
-                onClick={() => handleImageClick(score.sheet_id)}
+                onClick={() => router.push(`/allsheets/${score.sheet_id}`)} // 수정된 부분
               >
                 <Image
                   src="/delete.svg"

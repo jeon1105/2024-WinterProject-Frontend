@@ -53,20 +53,18 @@ export default function Home() {
     }
     const accessToken = localStorage.getItem("access_token");
     console.log(accessToken);
+    console.log(document.cookie);
 
     try {
-      const response = await fetch(
-        "http://52.78.134.101:5000/musicsheets/convert",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`, // Authorization 헤더 추가
-          },
-          body: data,
-          credentials: "include", // 쿠키와 자격 증명을 함께 보내기 // 쿠키와 자격 증명을 함께 보내기
-          mode: "cors", // CORS 모드 설정
-        }
-      );
+      const response = await fetch("https://smini.site/musicsheets/convert", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Authorization 헤더 추가
+        },
+        body: data,
+        credentials: "include", // 쿠키와 자격 증명을 함께 보내기 // 쿠키와 자격 증명을 함께 보내기
+        mode: "cors", // CORS 모드 설정
+      });
 
       if (response.ok) {
         const result = await response.json();

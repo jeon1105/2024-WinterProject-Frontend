@@ -32,7 +32,7 @@ export default function SignUp() {
     try {
       console.log("Sending POST request with data:", formData);
       const response = await axios.post(
-        "http://52.78.134.101:5000/signup",
+        "https://smini.site/signup",
         {
           nickname: formData.nickname,
           user_id: formData.user_id,
