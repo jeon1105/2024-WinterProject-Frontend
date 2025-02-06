@@ -1,190 +1,214 @@
-import { useState, useEffect } from "react";
 import NavigationBar from "@/widgets/header";
+import { useEffect, useState } from "react";
+import style from "./allsheets.module.css";
 import Image from "next/image";
-import style from "./[sheet_id].module.css";
-import axios from "axios";
 import { useRouter } from "next/router";
+import fecthUpload from "@/lib/fetch-upload";
+import Fuse from "fuse.js";
 
-type MusicSheet = {
-  instrument: string;
-  stage: string;
-  pdf_url: string;
+type Score = {
+  title: string;
+  sheet_id: string;
 };
 
-export default function MusicSheetPage() {
-  const [musicsheet, setMusicsheet] = useState<MusicSheet | null>(null);
-  const [uploadedVideos, setUploadedVideos] = useState<string[]>([]); // 업로드된 영상 URL 배열
-  const [error, setError] = useState<string | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
-  const [uploading, setUploading] = useState(false);
+export const getStaticProps = async () => {
+  const allSheets = await fecthUpload();
+  return {
+    props: {
+      allSheets,
+    },
+  };
+};
+
+const ITEMS_PER_PAGE = 8;
+
+export default function AllSheet() {
+  const [scores, setScores] = useState<Score[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
-  const { sheet_id } = router.query; // sheet_id를 URL 파라미터에서 가져옵니다.
 
   useEffect(() => {
-    if (!sheet_id) return;
+    const user_id = localStorage.getItem("user_id");
+    async function fetchScores(): Promise<void> {
+      if (!user_id) {
+        console.error("User ID is not available.");
+        return;
+      }
 
-    // 더미 데이터 처리
-    if (sheet_id === "dummy_id") {
-      setMusicsheet({
-        instrument: "Piano",
-        stage: "Beginner",
-        pdf_url: "/dummy.pdf",
-      });
-      return;
-    }
-
-    const fetchMusicSheet = async () => {
       const accessToken = localStorage.getItem("access_token");
-
       if (!accessToken) {
-        setError("No access token found.");
+        console.error("Access Token is not available.");
         return;
       }
 
       try {
-        const response = await axios.get<MusicSheet>(
-          `https://smini.site/musicsheets/${sheet_id}`,
+        const response = await fetch(
+          `http://52.78.134.101:5000/users/${user_id}/musicsheets`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
             },
-            withCredentials: true,
           }
         );
+        if (!response.ok) {
+          throw new Error("Failed to fetch scores");
+        }
 
-        setMusicsheet(response.data);
+        const data = await response.json();
+        setScores(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error("Error fetching music sheet:", error);
-        setError("Failed to load music sheet");
+        console.error("Failed to load scores:", error);
+        setScores([]);
       }
-    };
+    }
 
-    fetchMusicSheet();
-  }, [sheet_id]);
+    fetchScores();
+  }, []);
 
-  const handlePreview = () => {
-    setShowPreview(!showPreview);
+  const fuse = new Fuse(scores, {
+    keys: ["title"],
+    includeScore: true,
+  });
+
+  const filteredScores = searchTerm
+    ? fuse.search(searchTerm).map((result) => result.item)
+    : scores;
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentScores = filteredScores.slice(startIndex, endIndex);
+
+  const handleImageClick = (sheet_id: string) => {
+    router.push(`/allsheets/${sheet_id}`);
   };
 
-  const handleVideoUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const handleDeleteClick = async (sheet_id: string) => {
+    const user_id = localStorage.getItem("user_id");
+    const accessToken = localStorage.getItem("access_token");
 
-    const formData = new FormData();
-    formData.append("file", file);
-
-    setUploading(true);
+    if (!user_id || !accessToken) {
+      console.error("User ID or Access Token is missing");
+      return;
+    }
 
     try {
-      const response = await axios.post(
-        "https://smini.site/upload/video",
-        formData,
+      const response = await fetch(
+        `http://52.78.134.101:5000/musicsheets/${sheet_id}`,
         {
+          method: "DELETE",
           headers: {
-            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
           },
         }
       );
 
-      setUploadedVideos((prev) => [...prev, response.data.video_path]); // 서버에서 반환된 영상 URL 추가
+      if (!response.ok) {
+        throw new Error("Failed to delete score");
+      }
+
+      setScores((prevScores) =>
+        prevScores.filter((score) => score.sheet_id !== sheet_id)
+      );
     } catch (error) {
-      console.error("Error uploading video:", error);
-      setError("Failed to upload video");
-    } finally {
-      setUploading(false);
+      console.error("Failed to delete score:", error);
     }
   };
 
-  if (error) {
-    return (
-      <div className={style.error}>
-        <h1>Error</h1>
-        <p>{error}</p>
-      </div>
-    );
-  }
+  const handleNextPage = () => {
+    if (currentPage < Math.ceil(filteredScores.length / ITEMS_PER_PAGE)) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
 
-  if (!musicsheet) {
-    return (
-      <div className={style.error}>
-        <h1>Music Sheet Not Found</h1>
-        <p>The requested music sheet could not be found.</p>
-      </div>
-    );
-  }
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
 
   return (
     <>
       <NavigationBar />
       <div className={style.window}>
-        <h1 className={style.title}>Music Scores</h1>
-        <div className={style.content}>
-          <div className={style.icon}>
-            <Image
-              src="/sheet.svg"
-              alt="Music Sheet Icon"
-              width={90}
-              height={90}
-            />
-          </div>
-          <h2 className={style.subtitle}>{musicsheet.instrument}</h2>
-          <p className={style.description}>
-            Difficulty Level: {musicsheet.stage}
-          </p>
-          <div className={style.buttons}>
-            <button onClick={handlePreview} className={style.button}>
-              {showPreview ? "Close Preview" : "Preview PDF"}
-            </button>
-            <a
-              href={musicsheet.pdf_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={style.button}
-            >
-              Download PDF
-            </a>
-          </div>
-        </div>
-
-        {showPreview && (
-          <div className={style.preview}>
-            <iframe
-              src={musicsheet.pdf_url}
-              width="100%"
-              height="600px"
-              className={style.iframe}
-            ></iframe>
-          </div>
-        )}
-
-        <div className={style.uploadSection}>
-          <h3>Upload Your Performance</h3>
+        <div className={style.container}>
           <input
-            type="file"
-            accept="video/*"
-            onChange={handleVideoUpload}
-            disabled={uploading}
+            type="text"
+            className={style.Searchbar}
+            placeholder="Hinted search text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          {uploading && <p>Uploading...</p>}
-        </div>
-
-        <div className={style.videoList}>
-          <h3>Uploaded Videos</h3>
-          {uploadedVideos.length > 0 ? (
-            uploadedVideos.map((videoUrl, index) => (
-              <div key={index} className={style.videoItem}>
-                <video controls width="100%">
-                  <source src={videoUrl} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
+          <div className={style.TrailingElements}>
+            <div className={style.searchicon}>
+              <Image
+                src="/search.svg"
+                width={18}
+                height={18}
+                alt="Search Icon"
+              />
+            </div>
+          </div>
+          <h1 className={style.titleContainer}>Uploaded Scores</h1>
+          <p className={style.subtitle}>
+            View and manage your converted PDF scores.
+          </p>
+          <div className={style.list}>
+            {currentScores.map((score) => (
+              <div
+                key={score.sheet_id}
+                className={style.Item}
+                onClick={() => handleImageClick(score.sheet_id)}
+              >
+                <Image
+                  src="/delete.svg"
+                  alt="Delete Icon"
+                  width={21}
+                  height={19}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteClick(score.sheet_id);
+                  }}
+                />
+                <div className={style.frame}>
+                  <Image
+                    src="/sheet.svg"
+                    alt={score.title}
+                    width={90}
+                    height={90}
+                  />
+                </div>
+                <div className={style.Box}>
+                  <div className={style.title}>{score.title}</div>
+                </div>
               </div>
-            ))
-          ) : (
-            <p>No videos uploaded yet.</p>
-          )}
+            ))}
+          </div>
+
+          <div className={style.pagination}>
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className={style.pageButton}
+            >
+              Previous
+            </button>
+            <span className={style.pageInfo}>
+              Page {currentPage} of{" "}
+              {Math.ceil(filteredScores.length / ITEMS_PER_PAGE)}
+            </span>
+            <button
+              onClick={handleNextPage}
+              disabled={
+                currentPage ===
+                Math.ceil(filteredScores.length / ITEMS_PER_PAGE)
+              }
+              className={style.pageButton}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </>
