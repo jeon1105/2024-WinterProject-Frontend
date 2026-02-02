@@ -1,8 +1,7 @@
-# 2024-WinterProject-Frontend
+### 2024-WinterProject-Frontend
+> **인천대학교 정보통신공학과 프로그래밍 소모임 ComWith**
 
-# (웹서비스 이름)
-> **인천대학교 정보통신공학과 프로그래밍 소모임 ComWith** <br/>
-
+<br/>
 
 <div align="center">
   <h1>🎼 NotaNova 🎼</h1>
