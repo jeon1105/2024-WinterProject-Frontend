@@ -308,6 +308,16 @@ src/
 ```
 -->
 
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/41b8c17f-134c-455e-a738-5a38f438db99" 
+       alt="Main" 
+       width="70%"
+       style="border-radius: 20px;"/>
+</div>
+
+<br/>
+
+
 ### 커밋 메시지
 - feat: 새로운 기능 추가
 - fix: 버그 수정
