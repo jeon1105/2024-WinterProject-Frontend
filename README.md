@@ -52,15 +52,37 @@
 > **백엔드 서버** : <td><a href="https://github.com/ComWith/2024-WinterProject-Backend">BE_Github</a></td><br>
 
 ## 개발자 소개
-|      김경재       |          박병욱         |       전민경         |                                                                                                               
-| :------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | 
-|   <img width="160px" src="이미지 주소" />    |                      <img width="160px" src="이미지 주소" />    |                   <img width="160px" src="이미지 주소"/>   |
-|   [@silly0302](https://github.com/silly0302)   |    [@Rockernun](https://github.com/Rockernun)  | [@jeon1105](https://github.com/jeon1105)  |
-| 인천대학교 정보통신공학과 | 인천대학교 정보통신공학과 | 인천대학교 정보통신공학과 |
+<div align="center">
+<table>
+  <tr>
+    <td align="center"><b>김경재</b></td>
+    <td align="center"><b>박병욱</b></td>
+    <td align="center"><b>전민경</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img width="160px" src="https://avatars.githubusercontent.com/silly0302" /></td>
+    <td align="center"><img width="160px" src="https://avatars.githubusercontent.com/Rockernun" /></td>
+    <td align="center"><img width="160px" src="https://avatars.githubusercontent.com/jeon1105" /></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/smiinii">@silly0302</a></td>
+    <td align="center"><a href="https://github.com/yim0327">@Rockernun</a></td>
+    <td align="center"><a href="https://github.com/C-ongshim">@jeon1105</a></td>
+  </tr>
+  <tr>
+    <td align="center">인천대학교 정보통신공학과</td>
+    <td align="center">인천대학교 정보통신공학과</td>
+    <td align="center">인천대학교 정보통신공학과</td>
+  </tr>
+</table>
+</div>
+
+<br/>
+
 
 ## 프로젝트 소개
 
-(웹서비스 이름)는 연주하고 싶은 곡의 악보가 없을 때, 누구나 쉽게 해당 음악의 악보를 얻을 수 있도록 한다. 악보를 찾거나 제작하는 데 들이는 시간과 비용을 절약하고, 음악 연주에 더 집중할 수 있는 환경을 제공한다.
+NotaNova는 연주하고 싶은 곡의 악보가 없을 때, 누구나 쉽게 해당 음악의 악보를 얻을 수 있도록 한다. 악보를 찾거나 제작하는 데 들이는 시간과 비용을 절약하고, 음악 연주에 더 집중할 수 있는 환경을 제공한다.
 
 ## 시작 가이드
 ### Requirements
@@ -108,6 +130,58 @@ For building and running the application you need:
 - AI Music Analysis API | Klangio를 이용하여 악보로 변환할 때 사용자가 원하는 악기 선택 가능
 
 &nbsp;
+
+
+### 1) 🔑 로그인 · 회원가입
+- 첫 로그인 이후 개인화된 프로젝트/악보 관리
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/fd17c101-055b-4f2c-847d-5ae423f2b91d" alt="로그인/회원가입 시연" width="80%"/>
+</div>
+
+&nbsp;
+
+### 2) 📤 동영상 업로드
+- 사용자가 보유한 음악/연주 영상(mp3/wav/mp4 등) 업로드
+- 업로드 완료 후 자동 전처리 및 분석 대기
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/fe8ecedc-0cdd-4d08-9e21-5a0fd8c0d7fd" alt="동영상 업로드 시연" width="80%"/>
+</div>
+
+&nbsp;
+
+### 3) 🧾 악보 추출 및 다운로드
+- **AI Music Analysis API** (Klangio)로 음악 분석 → 악보 자동 생성
+- PDF 미리보기/다운로드 제공, 제목·작곡가 등 메타데이터 편집
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/6da64889-8940-4015-956b-7cf2fd06cf21" alt="악보 추출 및 다운로드 시연" width="80%"/>
+</div>
+
+<details>
+  <summary>세부 옵션 (난이도 · 악기) 펼치기</summary>
+
+  #### 🎚 난이도 단계별 악보
+  - **초급**: 주멜로디 중심, 간단한 코드 표기  
+  - **중급**: 코드 진행/리듬/장식음 추가  
+  - **고급**: 세부 화음/복잡 리듬/연주기법(트릴·글리산도 등) 포함
+
+  #### 🎻 악기 선택
+  - 변환 시 원하는 **악기 파트**(예: 피아노, 기타 등) 지정 가능
+</details>
+
+&nbsp;
+
+### 4) 🎬 연주 영상 업로드
+- 생성된 악보 기반의 **연주 영상 업로드** 및 웹 재생 지원
+- 악보/영상 연동으로 학습·공유에 용이
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/ea195e97-b6b6-474b-ad37-4da645c6adcb" alt="연주 영상 업로드 시연" width="80%"/>
+</div>
+<br/>
+
 
 ### ⭐️ 난이도 단계별 악보 표출
 **a. 초급**
